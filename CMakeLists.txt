@@ -575,7 +575,7 @@ set(PKG_LIBRARIES
 if (WIN32)
   set(SIMBODY_CMAKE_DIR cmake)
 elseif (UNIX)
-  set(SIMBODY_CMAKE_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/simbody/)
+  set(SIMBODY_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/simbody/)
 endif ()
 
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/SimbodyConfig.cmake.in
@@ -597,6 +597,9 @@ WRITE_BASIC_CONFIG_VERSION_FILE(
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/SimbodyConfigVersion.cmake
     DESTINATION ${SIMBODY_CMAKE_DIR})
 
+
+install(EXPORT SimbodyTargets DESTINATION
+  "${SIMBODY_CMAKE_DIR}") #optionally: COMPONENT dev
 
 # Install a sample CMakeLists.txt that uses SimbodyConfig.cmake.
 INSTALL(FILES ${CMAKE_SOURCE_DIR}/cmake/SampleCMakeLists.txt
