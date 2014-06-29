@@ -586,17 +586,23 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/SimbodyConfig.cmake
 # Create a file that allows clients to Simbody to ensure they have the version
 # of Simbody they want.
 # Requires CMake 2.8.6.
-# Note: this is actually deprecated in the latest CMake. Eventually,
-# we are to use WRITE_BASIC_PACKAGE_VERSION_FILE instead.
-include(WriteBasicConfigVersionFile)
-# Writes a ConfigVersion file for us.
-WRITE_BASIC_CONFIG_VERSION_FILE(
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake/SimbodyConfigVersion.cmake
-    VERSION "${SIMBODY_VERSION}"
-    COMPATIBILITY SameMajorVersion)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/SimbodyConfigVersion.cmake
-    DESTINATION ${SIMBODY_CMAKE_DIR})
+if(CMAKE_VERSION VERSION_LESS 2.8.8) # remove when older CMake versions are no longer supported
+    include(WriteBasicConfigVersionFile)
+    # Writes a ConfigVersion file for us.
+    WRITE_BASIC_CONFIG_VERSION_FILE(
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/SimbodyConfigVersion.cmake
+        VERSION "${SIMBODY_VERSION}"
+        COMPATIBILITY SameMajorVersion)
+else()
+    include(CMakePackageConfigHelpers)
+     WRITE_BASIC_PACKAGE_VERSION_FILE(
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/SimbodyConfigVersion.cmake
+        VERSION "${SIMBODY_VERSION}"
+        COMPATIBILITY SameMajorVersion)
+endif()
 
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/SimbodyConfigVersion.cmake
+        DESTINATION ${SIMBODY_CMAKE_DIR})
 
 install(EXPORT SimbodyTargets DESTINATION
   "${SIMBODY_CMAKE_DIR}") #optionally: COMPONENT dev
