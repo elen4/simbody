@@ -438,7 +438,7 @@ ENDIF(NEED_QUOTES)
 SET(BUILD_USING_OTHER_LAPACK "" CACHE STRING
  "If you have your own Lapack and Blas, put library basenames here, separated by semicolons. See LAPACK_BEING_USED to see what's actually being used.")
 if(WIN32)
-    set(LAPACK_PLATFORM_DEFAULT liblapack;libblas)
+    set(LAPACK_PLATFORM_DEFAULT ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/liblapack.lib;${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/libblas.lib)
 else()
     find_package(BLAS)
     find_package(LAPACK)
@@ -467,11 +467,11 @@ IF(${CMAKE_C_COMPILER} MATCHES "cc" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
 ELSE()
     ## Assume Microsoft Visual Studio
     if (${PLATFORM_ABI} MATCHES "x64")
-        SET(MATH_LIBS_TO_USE    ${LAPACK_BEING_USED} pthreadVC2_x64)
-        SET(MATH_LIBS_TO_USE_VN ${LAPACK_BEING_USED} pthreadVC2_x64)
+        SET(MATH_LIBS_TO_USE    ${LAPACK_BEING_USED}  ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/pthreadVC2_x64.lib)
+        SET(MATH_LIBS_TO_USE_VN ${LAPACK_BEING_USED}  ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/pthreadVC2_x64.lib)
     else()
-        SET(MATH_LIBS_TO_USE    ${LAPACK_BEING_USED} pthreadVC2)
-        SET(MATH_LIBS_TO_USE_VN ${LAPACK_BEING_USED} pthreadVC2)
+        SET(MATH_LIBS_TO_USE    ${LAPACK_BEING_USED}  ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/pthreadVC2.lib)
+        SET(MATH_LIBS_TO_USE_VN ${LAPACK_BEING_USED}  ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/pthreadVC2.lib)
     endif()
 ENDIF()
 
@@ -518,7 +518,7 @@ INCLUDE(ApiDoxygen.cmake)
 
 # Each build should look in our local binary directory to find the
 # earlier-built libraries that it depends on.
-LINK_DIRECTORIES(${BUILD_BINARY_DIR})
+#LINK_DIRECTORIES(${BUILD_BINARY_DIR})
 
 # Specify where visualizer should be installed. This needs to be in the
 # root CMakeLists.txt so the cmake config file can see this value.
