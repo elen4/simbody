@@ -30,14 +30,21 @@ IF(BUILD_UNVERSIONED_LIBRARIES)
                 ${SOURCE_FILES} ${SOURCE_INCLUDE_FILES} 
                 ${API_ABS_INCLUDE_FILES})
     
+    if(WIN32 AND NOT BUILD_USING_LAPACK)
+        TARGET_LINK_LIBRARIES(${SHARED_TARGET}
+                PUBLIC ${SimTKCOMMON_SHARED_LIBRARY} PRIVATE ${MATH_LIBS_TO_USE} INTERFACE \${_IMPORT_PREFIX}/lib/liblapack.lib  \${_IMPORT_PREFIX}/lib/libblas.lib)
+    else()
     TARGET_LINK_LIBRARIES(${SHARED_TARGET} 
                  ${SimTKCOMMON_SHARED_LIBRARY}
                  ${MATH_LIBS_TO_USE})
-    
+    endif()
     SET_TARGET_PROPERTIES(${SHARED_TARGET} PROPERTIES
         PROJECT_LABEL "Code - ${SHARED_TARGET}"
         SOVERSION ${SIMBODY_SONAME_VERSION})
     
+    get_target_property (interfacelibs ${SHARED_TARGET}  LINK_INTERFACE_LIBRARIES )
+     message("interface libs for simmath ${interfacelibs}")
+
     # install library; on Windows both .lib and .dll go in the lib directory.
     INSTALL(TARGETS ${SHARED_TARGET} EXPORT SimbodyTargets
                      PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
@@ -63,7 +70,10 @@ IF(BUILD_VERSIONED_LIBRARIES)
     SET_TARGET_PROPERTIES(${SHARED_TARGET_VN} PROPERTIES
         PROJECT_LABEL "Code - ${SHARED_TARGET_VN}" 
         SOVERSION ${SIMBODY_SONAME_VERSION})
-    
+
+     get_target_property (interfacelibs ${SHARED_TARGET_VN}  LINK_INTERFACE_LIBRARIES )
+     message("interface libs for simmath ${interfacelibs}")
+
     # install library; on Windows both .lib and .dll go in the lib directory.
     INSTALL(TARGETS ${SHARED_TARGET_VN} EXPORT SimbodyTargets
                      PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
